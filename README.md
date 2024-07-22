@@ -1,5 +1,7 @@
 # translator-llama2
 
+This project is a simple translator using llama2 model from Ollama. 
+Please remember to install the llama2 model in your local area before running this project. (For the installation, please refer to the link: https://ollama.com/download.)
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
