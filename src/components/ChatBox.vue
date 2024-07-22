@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import ollama from 'ollama'
+import { translateText } from '@/services/ollamaService'
 
-const chatInput = ref('Why is the sky blue?')
+const chatInput = ref('')
 
 const submitChat = async () => {
-  const content = chatInput.value
-  chatInput.value = ''
-  const response = await ollama.chat({
-    model: 'llama2',
-    messages: [{ role: 'user', content }]
-  })
-  console.log(response.message.content)
+  translateText(chatInput.value, 'English')
 }
 </script>
 
