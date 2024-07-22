@@ -19,7 +19,7 @@ export default defineComponent({
     }
     const options = ref<ModelOpt[]>([
       { name: 'llama2-zh-to-en (Chinese to English)', code: 'English' },
-      { name: 'llama2-en-to-zh (English to Chinese)', code: '繁體中文' },
+      { name: 'llama2-en-to-zh (English to Chinese)', code: 'Chinese' },
     ]);
     const selectedOption = ref<string>();
 
