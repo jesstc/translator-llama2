@@ -41,13 +41,6 @@
                       :isTranslated="true"
                       :transltedContent="transltedContent"  />
         </div>
-        <!-- <div class="grid grid-nogutter mt-2 align-items-start" v-else>
-          <TextareaBox class="col" label="Original Content" />
-          <div class="col-1 text-center align-self-center">
-            <i class="pi pi-arrow-right" style="color: 'var(--p-primary-color)'">aaa</i>
-          </div>
-          <TextareaBox class="col" label="Translated Content" :isTranslated="true" />
-        </div> -->
       </StepPanel>
     </StepItem>
   </Stepper>
