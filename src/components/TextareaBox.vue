@@ -15,17 +15,11 @@
     </div>
 
     <div class="flex flex-column gap-1">
-      <!-- original -->
       <Textarea v-model="text" rows="20" autoResize
-                v-if="!isTranslated"
                 :invalid="text.length >= 4000"
-                :disabled="!hasModel"
+                :disabled="!hasModel || isTranslated"
                 @input="onInput"
                 @update:model-value="handleTextareaUpdate"
-                />
-      <!-- translated -->
-      <Textarea v-model="translatedText" rows="20" autoResize disabled
-                v-else
                 />
       <Message v-if="visible" severity="error" 
                 :life="5000"
@@ -41,7 +35,7 @@
 
   
 <script lang="ts">
-import { ref, computed, defineComponent, type PropType } from 'vue';
+import { ref, computed, watch, defineComponent, type PropType } from 'vue';
 
 export default defineComponent({
   name: 'TextareaBox',
@@ -58,14 +52,14 @@ export default defineComponent({
       type: String as PropType<string>,
       required: true,
     },
-    translatedText: {
+    transltedContent: {
       type: String as PropType<string>,
       required: false,
     },
   },
   emits: ['updated'],
-  setup(_, { emit }) {
-    const text = ref<string>('');
+  setup(props, { emit }) {
+    const text = ref<string>(props.transltedContent ? props.transltedContent : '');
     const maxChars:number = 4000;
     const charCount = computed(() => text.value.length);
     const visible = ref<boolean>(false);
@@ -75,6 +69,11 @@ export default defineComponent({
       bottom: '1rem',
       right: '1rem',
     };
+
+    watch(() => props.transltedContent, (newValue) => {
+      console.log("translatedText update!!", newValue);
+      if (newValue) text.value = newValue;
+    });
 
     const copyText = async () => {
       try {
@@ -134,6 +133,7 @@ export default defineComponent({
       onInput,
       handleTextareaUpdate,
       messageStyle,
+      // localTranslatedText,
     };
   },
 })
