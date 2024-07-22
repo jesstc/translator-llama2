@@ -17,6 +17,7 @@ import Button from 'primevue/button';
 import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import Message from 'primevue/message';
+import ProgressSpinner from 'primevue/progressspinner';
 import FileUpload from 'primevue/fileupload';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
@@ -51,6 +52,7 @@ app.component('Button', Button);
 app.component('Select', Select);
 app.component('Textarea', Textarea);
 app.component('Message', Message);
+app.component('ProgressSpinner', ProgressSpinner);
 app.component('FileUpload', FileUpload);
 app.component('Toast', Toast);
 

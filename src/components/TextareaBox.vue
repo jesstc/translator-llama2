@@ -14,14 +14,18 @@
       </div>
     </div>
 
-    <div class="flex flex-column gap-1">
-      <Textarea v-model="text" rows="20" autoResize
-                :invalid="text.length >= 4000"
-                :disabled="!hasModel || isTranslated"
-                @input="onInput"
-                @update:model-value="handleTextareaUpdate"
-                />
-      <Message v-if="visible" severity="error" 
+    <div class="flex flex-column gap-1 textarea-div">
+        <div class="spinner-container" v-if="isInProgressLocal">
+          <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="8" fill="transparent" animationDuration=".5s" />
+        </div>
+        <Textarea v-model="text" rows="20" autoResize
+                  :invalid="text.length >= 4000"
+                  :disabled="!hasModel || isTranslated"
+                  @input="onInput"
+                  @update:model-value="handleTextareaUpdate"
+                  />
+      
+      <Message v-if="visible && !isTranslated" severity="error" 
                 :life="5000"
                 :style="messageStyle" >
         The maximum number of characters is 4000. <br>
@@ -56,10 +60,15 @@ export default defineComponent({
       type: String as PropType<string>,
       required: false,
     },
+    isInProgress: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+    },
   },
   emits: ['updated'],
   setup(props, { emit }) {
     const text = ref<string>(props.transltedContent ? props.transltedContent : '');
+    const isInProgressLocal = ref<boolean>(props.isInProgress ? props.isInProgress : false);
     const maxChars:number = 4000;
     const charCount = computed(() => text.value.length);
     const visible = ref<boolean>(false);
@@ -72,7 +81,14 @@ export default defineComponent({
 
     watch(() => props.transltedContent, (newValue) => {
       console.log("translatedText update!!", newValue);
-      if (newValue) text.value = newValue;
+      if (newValue) {
+        text.value = newValue;
+        isInProgressLocal.value = false;
+      }
+    });
+
+    watch(() => props.isInProgress, (newValue) => {
+      if (newValue) isInProgressLocal.value = newValue;
     });
 
     const copyText = async () => {
@@ -133,7 +149,7 @@ export default defineComponent({
       onInput,
       handleTextareaUpdate,
       messageStyle,
-      // localTranslatedText,
+      isInProgressLocal,
     };
   },
 })
@@ -142,5 +158,15 @@ export default defineComponent({
 <style lang="css">
 .p-textarea {
   resize: none; /* 禁用調整功能 */
+}
+.textarea-div {
+  position: relative;
+}
+.spinner-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
 }
 </style>

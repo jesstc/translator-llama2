@@ -29,7 +29,7 @@
       <Step><b class="text-lg">Enter / Upload the Content You Want to Translate: </b></Step>
       <StepPanel>
         <Message severity="success">* Please click " <i class="pi pi-arrow-right"></i> " to start the translation.</Message>
-        <div class="grid grid-nogutter mt-2 align-items-start" v-if="translateText">
+        <div class="grid grid-nogutter mt-3 align-items-start" v-if="translateText">
           <TextareaBox class="col" label="Original Content" 
                       :hasModel="translateModel != ''"
                       @updated="onUpdateTextareaContent" />
@@ -37,6 +37,7 @@
             <Button icon="pi pi-arrow-right" text rounded aria-label="Translate" @click="translate" />
           </div>
           <TextareaBox class="col" label="Translated Content"
+                      :isInProgress="isInProgress"
                       :isTranslated="true"
                       :transltedContent="transltedContent"  />
         </div>
@@ -73,6 +74,7 @@ export default defineComponent({
     const translateModel = ref<string>('');
     const originalContent = ref<string>('');
     const transltedContent = ref<string>('');
+    const isInProgress = ref<boolean>(false);
 
     function onUpdateSelect(selectedVal: string):void {
       if (selectedVal != null) {
@@ -93,6 +95,7 @@ export default defineComponent({
       if (originalContent.value) {
         console.log("model: " + translateModel.value)
         console.log("original content: " + originalContent.value)
+        isInProgress.value = true;
         transltedContent.value = await translateService(originalContent.value, translateModel.value);
       }
     }
@@ -105,6 +108,7 @@ export default defineComponent({
       transltedContent,
       translateModel,
       translate,
+      isInProgress,
     };
   }
 });
