@@ -29,19 +29,23 @@
       <Step><b class="text-lg">Enter / Upload the Content You Want to Translate: </b></Step>
       <StepPanel>
         <div class="grid grid-nogutter mt-2 align-items-start" v-if="translateText">
-          <TextareaBox class="col" label="Original Content" />
+          <TextareaBox class="col" label="Original Content" 
+                      :hasModel="translateModel != ''"
+                      @updated="onUpdateTextareaContent" />
           <div class="col-1 text-center align-self-center">
             <i class="pi pi-arrow-right" style="color: 'var(--p-primary-color)'"></i>
           </div>
-          <TextareaBox class="col" label="Translated Content" :isTranslated="true" />
+          <TextareaBox class="col" label="Translated Content"
+                      :isTranslated="true"
+                      :transltedContent="transltedContent"  />
         </div>
-        <div class="grid grid-nogutter mt-2 align-items-start" v-else>
+        <!-- <div class="grid grid-nogutter mt-2 align-items-start" v-else>
           <TextareaBox class="col" label="Original Content" />
           <div class="col-1 text-center align-self-center">
             <i class="pi pi-arrow-right" style="color: 'var(--p-primary-color)'">aaa</i>
           </div>
           <TextareaBox class="col" label="Translated Content" :isTranslated="true" />
-        </div>
+        </div> -->
       </StepPanel>
     </StepItem>
   </Stepper>
@@ -50,10 +54,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import ButtonList from './ButtonList.vue';
 import Selection from './Selection.vue';
 import TextareaBox from './TextareaBox.vue';
+import { translateText } from '@/services/ollamaService'
 
 export default defineComponent({
   name: 'TranslateSteps',
@@ -64,6 +69,9 @@ export default defineComponent({
   },
   setup() {
     const translateText = ref<boolean>(true);
+    const translateModel = ref<string>('');
+    const transltedContent = ref<string>('');
+    // translateText(chatInput.value, 'English');
 
     function onUpdateSelect(selectedVal: string):void {
       console.log("father(type): ", selectedVal);
@@ -75,12 +83,21 @@ export default defineComponent({
 
     function onUpdateModel(selectedVal: string):void {
       console.log("father(model): ", selectedVal);
+      translateModel.value = selectedVal;
+    }
+
+    function onUpdateTextareaContent(updatedContent: string):void {
+      console.log("father(textarea): ", updatedContent);
+      translateModel.value = updatedContent;
     }
 
     return {
       translateText,  // true: translate text, false: translate file
       onUpdateSelect,
       onUpdateModel,
+      onUpdateTextareaContent,
+      transltedContent,
+      translateModel,
     };
   }
 });

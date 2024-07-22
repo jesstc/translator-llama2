@@ -9,15 +9,23 @@
                 :disabled="charCount === 0" />
         <Button label="Paste" icon="pi pi-clipboard" size="small" severity="secondary" rounded 
                 @click="pasteText"
+                :disabled="!hasModel"
                 v-if="!isTranslated" />
       </div>
     </div>
 
     <div class="flex flex-column gap-1">
+      <!-- original -->
       <Textarea v-model="text" rows="20" autoResize
-                :disabled="isTranslated"
+                v-if="!isTranslated"
                 :invalid="text.length >= 4000"
+                :disabled="!hasModel"
                 @input="onInput"
+                @update:model-value="handleTextareaUpdate"
+                />
+      <!-- translated -->
+      <Textarea v-model="translatedText" rows="20" autoResize disabled
+                v-else
                 />
       <Message v-if="visible" severity="error" 
                 :life="5000"
@@ -34,8 +42,6 @@
   
 <script lang="ts">
 import { ref, computed, defineComponent, type PropType } from 'vue';
-// import { translateText } from '@/services/ollamaService';
-import ollama from 'ollama';
 
 export default defineComponent({
   name: 'TextareaBox',
@@ -44,15 +50,22 @@ export default defineComponent({
       type: Boolean as PropType<boolean>,
       required: false,
     },
+    hasModel: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+    },
     label: {
       type: String as PropType<string>,
       required: true,
     },
+    translatedText: {
+      type: String as PropType<string>,
+      required: false,
+    },
   },
   emits: ['updated'],
-  setup() {
+  setup(_, { emit }) {
     const text = ref<string>('');
-    const translatedText = ref<string>('');
     const maxChars:number = 4000;
     const charCount = computed(() => text.value.length);
     const visible = ref<boolean>(false);
@@ -85,7 +98,7 @@ export default defineComponent({
           }, 5000);
         }
         text.value = pastedText;
-        translate();
+        emit('updated', pastedText);
         console.log('Text pasted from clipboard');
       } catch (err) {
         console.error('Failed to paste text: ', err);
@@ -106,25 +119,10 @@ export default defineComponent({
       }
     };
 
-    // const translate = async () => {
-    //   console.log("translating....!!" + text.value)
-    //   try {
-    //     translatedText.value = await translateText(text.value, 'English');
-    //     console.log(translatedText);
-    //   } catch (error) {
-    //     console.error('Translation failed:', error);
-    //   }
-    // };
-    const translate = async () => {
-      const content = text.value;
-      translatedText.value = '';
-      const response = await ollama.chat({
-        model: 'llama3',
-        messages: [{ role: 'user', content }],
-      });
-      console.log(response.message.content);
+    function handleTextareaUpdate(val: string):void {
+      console.log(val)
+      emit('updated', val);
     }
-
 
     return {
       text,
@@ -134,6 +132,7 @@ export default defineComponent({
       copyText,
       pasteText,
       onInput,
+      handleTextareaUpdate,
       messageStyle,
     };
   },
